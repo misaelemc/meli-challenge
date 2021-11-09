@@ -1,0 +1,9 @@
+apply from:"$project.rootDir/gradle/android-library.gradle"
+
+android {
+
+}
+
+dependencies {
+    implementation "androidx.appcompat:appcompat:$rootProject.ext.appCompatVersion"
+}

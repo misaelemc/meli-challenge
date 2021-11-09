@@ -1,0 +1,36 @@
+apply from:"$project.rootDir/gradle/android-library.gradle"
+
+android {
+
+    buildFeatures {
+        viewBinding true
+    }
+    resourcePrefix 'meli_product_detail_impl_'
+}
+
+dependencies {
+    implementation project(':base')
+    implementation project(':meli-product-detail-api')
+
+    implementation "androidx.appcompat:appcompat:$rootProject.ext.appCompatVersion"
+    implementation "com.google.android.material:material:$rootProject.ext.materialVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.ext.constraintLayoutVersion"
+
+    // Network
+    implementation "com.google.code.gson:gson:$rootProject.ext.gsonVersion"
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.ext.retrofitVersion"
+
+    // RxJava
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.ext.rxJavaVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.ext.rxAndroidVersion"
+
+    // Epoxy
+    implementation "com.airbnb.android:epoxy:$rootProject.ext.epoxyVersion"
+    kapt "com.airbnb.android:epoxy-processor:$rootProject.ext.epoxyVersion"
+
+    // Dagger
+    implementation "com.google.dagger:dagger:$rootProject.ext.daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$rootProject.ext.daggerAndroidVersion"
+    kapt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$rootProject.ext.daggerVersion"
+}

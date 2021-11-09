@@ -1,0 +1,14 @@
+apply from:"$project.rootDir/gradle/android-library.gradle"
+
+android {
+
+}
+
+dependencies {
+    implementation project(':meli-categories-api')
+    implementation project(':meli-categories-impl')
+
+    // Dagger
+    implementation "com.google.dagger:dagger:$rootProject.ext.daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
+}

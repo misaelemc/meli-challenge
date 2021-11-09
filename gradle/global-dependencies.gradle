@@ -1,0 +1,39 @@
+// All project dependencies are here with their respective version number
+ext {
+    // Project
+    minSdkVersion = 24
+    compileSdkVersion = 30
+    targetSdkVersion = 30
+
+    // RxJava
+    rxAndroidVersion = "2.1.1"
+    rxJavaVersion = "2.2.11"
+
+    // Gradle
+    gradleVersion = '7.0.2'
+    kotlinGradleVersion = '1.5.30'
+
+    // Dagger
+    daggerVersion = '2.35'
+    daggerAndroidVersion = '2.35'
+
+    // Support Libraries
+    ktxVersion = '1.5.0'
+    materialVersion = '1.4.0'
+    appCompatVersion = '1.3.1'
+    constraintLayoutVersion = "2.1.1"
+
+    // Networking
+    gsonVersion = "2.8.6"
+    okhttpVersion = "4.0.1"
+    retrofitVersion = "2.9.0"
+
+    //Epoxy
+    epoxyVersion = "4.5.0"
+
+    // Lifecycle
+    lifecycleVersion = '2.3.1'
+
+    // Navigation
+    navigationVersion = '2.3.5'
+}

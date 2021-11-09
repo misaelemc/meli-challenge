@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/categoriesFragment">
+
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.mmunoz.meli.categories.impl.ui.fragments.CategoriesFragment"
+        android:label="@string/meli_categories_impl_category_title">
+        <action
+            android:id="@+id/categoriesFragment_to_subCategoriesFragment"
+            app:destination="@id/subCategoriesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/subCategoriesFragment"
+        android:name="com.mmunoz.meli.categories.impl.ui.fragments.SubCategoriesFragment"
+        android:label="@string/meli_categories_impl_sub_categories_title">
+        <action
+            android:id="@+id/subCategoriesFragment_to_categoriesFragment"
+            app:destination="@id/categoriesFragment" />
+    </fragment>
+</navigation>

@@ -1,0 +1,11 @@
+def rootDir = settingsDir
+def modulePrefix = ':'
+
+include modulePrefix + 'meli-product-detail-wiring-impl'
+project(modulePrefix + 'meli-product-detail-wiring-impl').projectDir = new File(rootDir, 'product-detail/wiring_impl')
+
+include modulePrefix + 'meli-product-detail-impl'
+project(modulePrefix + 'meli-product-detail-impl').projectDir = new File(rootDir, 'product-detail/impl')
+
+include modulePrefix + 'meli-product-detail-api'
+project(modulePrefix + 'meli-product-detail-api').projectDir = new File(rootDir, 'product-detail/api')

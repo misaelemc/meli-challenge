@@ -1,0 +1,14 @@
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // Warning: this repository is going to shut down soon
+    }
+}
+rootProject.name = "meli-challenge"
+include ':app'
+include ':base'
+apply from: 'search/search-settings.gradle'
+apply from: 'categories/categories-settings.gradle'
+apply from: 'product-detail/product-detail-settings.gradle'
