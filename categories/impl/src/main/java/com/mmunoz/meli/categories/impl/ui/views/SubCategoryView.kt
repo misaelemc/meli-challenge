@@ -10,14 +10,14 @@ import com.airbnb.epoxy.ModelProp
 import com.airbnb.epoxy.ModelView
 import com.google.android.material.card.MaterialCardView
 import com.mmunoz.meli.categories.impl.R
-import com.mmunoz.meli.categories.impl.data.models.SubCategoryModel
+import com.mmunoz.meli.categories.impl.data.models.SubCategoryItemModel
 
 @ModelView(autoLayout = ModelView.Size.MATCH_WIDTH_WRAP_HEIGHT)
 class SubCategoryView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : ConstraintLayout(context, attrs) {
 
-    private lateinit var data: SubCategoryModel
+    private lateinit var data: SubCategoryItemModel
 
     private val textViewCategory: TextView by lazy {
         findViewById(R.id.textView_category)
@@ -36,7 +36,7 @@ class SubCategoryView @JvmOverloads constructor(
     }
 
     @ModelProp
-    fun setData(data: SubCategoryModel) {
+    fun setData(data: SubCategoryItemModel) {
         this.data = data
     }
 
@@ -58,6 +58,6 @@ class SubCategoryView @JvmOverloads constructor(
 
     interface Listener {
 
-        fun onSubCategoryClicked(data: SubCategoryModel)
+        fun onSubCategoryClicked(data: SubCategoryItemModel)
     }
 }
