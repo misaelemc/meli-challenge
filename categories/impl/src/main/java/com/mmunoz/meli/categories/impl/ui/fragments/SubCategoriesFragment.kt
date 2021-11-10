@@ -6,13 +6,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.mmunoz.meli.categories.impl.R
+import com.mmunoz.meli.categories.impl.data.models.SubCategoryItemModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryModel
 import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplFragmentBinding
+import com.mmunoz.meli.categories.impl.ui.viewModels.SubCategoriesViewModel
+import com.mmunoz.meli.categories.impl.ui.views.SubCategoryView
+import com.mmunoz.meli.categories.impl.ui.views.bannerView
 import com.mmunoz.meli.categories.impl.ui.views.subCategoryView
 import dagger.android.support.AndroidSupportInjection
+import javax.inject.Inject
 
-class SubCategoriesFragment: Fragment() {
+class SubCategoriesFragment : Fragment(), SubCategoryView.Listener {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: SubCategoriesViewModel
 
     private var _binding: MeliCategoriesImplFragmentBinding? = null
     private val binding get() = _binding!!
@@ -34,6 +45,7 @@ class SubCategoriesFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        setupViewModel()
     }
 
     override fun onDestroyView() {
@@ -41,30 +53,58 @@ class SubCategoriesFragment: Fragment() {
         super.onDestroyView()
     }
 
-    private fun setupRecyclerView() {
-        binding.recyclerView.layoutManager =
-            GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
-        binding.recyclerView.setHasFixedSize(false)
+    override fun onSubCategoryClicked(data: SubCategoryItemModel) {
 
-        val items = listOf<SubCategoryModel>(
-            SubCategoryModel("MLA1403", "Alimentos y Bebidas", 50),
-            SubCategoryModel("MLA1071", "Animales y Mascotas", 70),
-            SubCategoryModel("MLA1367", "Antigüedades y Colecciones", 130),
-            SubCategoryModel("MLA1368", "Arte, Librería y Mercería", 1000)
-        )
+    }
 
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory)
+            .get(SubCategoriesViewModel::class.java)
+        lifecycle.addObserver(viewModel)
+        viewModel.error.observe(viewLifecycleOwner, {
+            showErrorView()
+        })
+        viewModel.data.observe(viewLifecycleOwner, { data ->
+            loadData(data)
+        })
+        viewModel.dataLoading.observe(viewLifecycleOwner, { loading ->
+            binding.loaderView.visibility = if (loading) View.VISIBLE else View.GONE
+        })
+    }
+
+    private fun showErrorView() {
+        binding.errorView.setData(getString(R.string.meli_categories_impl_default_error))
+        binding.errorView.visibility = View.VISIBLE
+    }
+
+    private fun loadData(data: SubCategoryModel) {
+        binding.errorView.visibility = View.GONE
         binding.recyclerView.withModels {
-            items.map { item ->
+            bannerView {
+                id(BANNER_TAG)
+                data(data.picture)
+            }
+            data.childrenCategories.map { category ->
                 subCategoryView {
-                    id(item.id)
-                    data(item)
+                    id(category.id)
+                    data(category)
                     spanSizeOverride { _, _, _ -> 1 }
+                    listener(this@SubCategoriesFragment)
                 }
             }
         }
     }
 
+    private fun setupRecyclerView() {
+        binding.recyclerView.layoutManager =
+            GridLayoutManager(context, TWO_COLUMNS, GridLayoutManager.VERTICAL, false)
+        binding.recyclerView.setHasFixedSize(false)
+    }
+
     companion object {
-        const val THREE_COLUMNS = 3
+
+        const val BANNER_TAG ="banner_tag"
+        const val SUB_CATEGORIES_ARGS = "sub_categories_args"
+        const val TWO_COLUMNS = 2
     }
 }

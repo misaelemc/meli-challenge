@@ -3,6 +3,7 @@ package com.mmunoz.meli.categories.impl.di.components
 import com.mmunoz.base.di.ComponentHolder
 import com.mmunoz.base.di.modules.FactoryModule
 import com.mmunoz.meli.categories.impl.di.modules.CategoriesNavigationFeatureModule
+import com.mmunoz.meli.categories.impl.di.modules.CategoriesNetworkModule
 import com.mmunoz.meli.categories.impl.ui.fragments.CategoriesNavigationFragment
 import com.mmunoz.meli.search.api.SearchFeatureLoader
 import dagger.Component
@@ -16,6 +17,7 @@ import javax.inject.Scope
     dependencies = [CategoriesComponent.Parent::class],
     modules = [
         FactoryModule::class,
+        CategoriesNetworkModule::class,
         AndroidSupportInjectionModule::class,
         CategoriesNavigationFeatureModule::class
     ]
