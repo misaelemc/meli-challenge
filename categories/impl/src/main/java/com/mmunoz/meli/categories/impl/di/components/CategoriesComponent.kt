@@ -4,6 +4,7 @@ import com.mmunoz.base.di.ComponentHolder
 import com.mmunoz.base.di.modules.FactoryModule
 import com.mmunoz.meli.categories.impl.di.modules.CategoriesNavigationFeatureModule
 import com.mmunoz.meli.categories.impl.ui.fragments.CategoriesNavigationFragment
+import com.mmunoz.meli.search.api.SearchFeatureLoader
 import dagger.Component
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
@@ -23,6 +24,7 @@ interface CategoriesComponent {
 
     interface Parent {
         val retrofit: Retrofit
+        val searchFeatureLoader: SearchFeatureLoader
     }
 
     fun androidInjector(): DispatchingAndroidInjector<Any>

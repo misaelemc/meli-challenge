@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation project(':base')
+    implementation project(':meli-search-api')
     implementation project(':meli-categories-api')
 
     implementation "androidx.appcompat:appcompat:$rootProject.ext.appCompatVersion"

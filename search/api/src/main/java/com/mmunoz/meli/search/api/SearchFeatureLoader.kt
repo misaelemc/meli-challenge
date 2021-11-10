@@ -4,5 +4,5 @@ import androidx.fragment.app.Fragment
 
 interface SearchFeatureLoader {
 
-    fun getFragment(): Fragment
+    fun getFragment(args: SearchArgs? = null): Fragment
 }
