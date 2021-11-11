@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="meli_search_impl_title">Search</string>
+    <string name="meli_search_impl_search_in_mercadolibre">Search in MercadoLibre</string>
+    <string name="meli_search_impl_looking_for_products">Looking for products..</string>
+    <string name="meli_search_impl_free_shipping">Free Shipping</string>
+</resources>

@@ -7,23 +7,27 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.mmunoz.base.viewModels.AppViewModel
 import com.mmunoz.meli.categories.impl.R
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryItemModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryModel
 import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplFragmentBinding
 import com.mmunoz.meli.categories.impl.ui.viewModels.SubCategoriesViewModel
+import com.mmunoz.meli.categories.impl.ui.views.BannerView
 import com.mmunoz.meli.categories.impl.ui.views.SubCategoryView
 import com.mmunoz.meli.categories.impl.ui.views.bannerView
 import com.mmunoz.meli.categories.impl.ui.views.subCategoryView
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class SubCategoriesFragment : Fragment(), SubCategoryView.Listener {
+class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.Listener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: SubCategoriesViewModel
+    private lateinit var sharedViewModel: AppViewModel
 
     private var _binding: MeliCategoriesImplFragmentBinding? = null
     private val binding get() = _binding!!
@@ -53,11 +57,16 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener {
         super.onDestroyView()
     }
 
-    override fun onSubCategoryClicked(data: SubCategoryItemModel) {
+    override fun onBackPressed() {
+        findNavController().popBackStack()
+    }
 
+    override fun onSubCategoryClicked(data: SubCategoryItemModel) {
+        sharedViewModel.setAction(AppViewModel.Actions.OnSubCategorySelected(data.id, data.name))
     }
 
     private fun setupViewModel() {
+        sharedViewModel = ViewModelProvider(requireActivity()).get(AppViewModel::class.java)
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(SubCategoriesViewModel::class.java)
         lifecycle.addObserver(viewModel)
@@ -83,6 +92,7 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener {
             bannerView {
                 id(BANNER_TAG)
                 data(data.picture)
+                listener(this@SubCategoriesFragment)
             }
             data.childrenCategories.map { category ->
                 subCategoryView {
@@ -103,8 +113,9 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener {
 
     companion object {
 
-        const val BANNER_TAG ="banner_tag"
+        const val BANNER_TAG = "banner_tag"
         const val SUB_CATEGORIES_ARGS = "sub_categories_args"
         const val TWO_COLUMNS = 2
     }
+
 }

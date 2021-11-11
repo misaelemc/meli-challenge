@@ -2,15 +2,14 @@ package com.mmunoz.meli.categories.impl.ui.views
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.TextView
+import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.airbnb.epoxy.AfterPropsSet
 import com.airbnb.epoxy.CallbackProp
 import com.airbnb.epoxy.ModelProp
 import com.airbnb.epoxy.ModelView
-import com.google.android.material.card.MaterialCardView
-import com.mmunoz.meli.categories.impl.R
 import com.mmunoz.meli.categories.impl.data.models.CategoryModel
+import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplCategoryViewBinding
 
 @ModelView(autoLayout = ModelView.Size.MATCH_WIDTH_WRAP_HEIGHT)
 class CategoryView @JvmOverloads constructor(
@@ -19,16 +18,12 @@ class CategoryView @JvmOverloads constructor(
 
     private lateinit var data: CategoryModel
 
-    private val textViewCategory: TextView by lazy {
-        findViewById(R.id.textView_category)
-    }
-
-    private val cardViewLayout: MaterialCardView by lazy {
-        findViewById(R.id.cardView)
-    }
+    private val binding =
+        MeliCategoriesImplCategoryViewBinding.inflate(LayoutInflater.from(context), this)
 
     init {
-        inflate(context, R.layout.meli_categories_impl_category_view, this)
+        isClickable = true
+        isFocusable = true
     }
 
     @ModelProp
@@ -38,14 +33,14 @@ class CategoryView @JvmOverloads constructor(
 
     @CallbackProp
     fun setListener(listener: Listener?) {
-        cardViewLayout.setOnClickListener {
+        setOnClickListener {
             listener?.onCategoryClicked(data)
         }
     }
 
     @AfterPropsSet
     fun bindData() {
-        textViewCategory.text = data.name
+        binding.textViewCategory.text = data.name
     }
 
     interface Listener {

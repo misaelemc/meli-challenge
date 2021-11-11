@@ -21,7 +21,7 @@ class CategoriesViewModel @Inject constructor(
     val dataLoading: LiveData<Boolean> = _dataLoading
 
     private val _categories = MutableLiveData<List<CategoryModel>>()
-    val categories = _categories
+    val categories: LiveData<List<CategoryModel>> = _categories
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
@@ -30,7 +30,7 @@ class CategoriesViewModel @Inject constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        if (disposable == null) {
+        if (disposable == null || categories.value == null) {
             disposable = repository.getCategories()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

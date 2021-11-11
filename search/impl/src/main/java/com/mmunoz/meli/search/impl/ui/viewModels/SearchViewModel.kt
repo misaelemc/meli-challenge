@@ -1,0 +1,111 @@
+package com.mmunoz.meli.search.impl.ui.viewModels
+
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ViewModel
+import com.mmunoz.meli.search.impl.data.models.SearchData
+import com.mmunoz.meli.search.impl.data.models.SearchResponse
+import com.mmunoz.meli.search.impl.data.repositories.SearchRepository
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+
+class SearchViewModel constructor(
+    private val repository: SearchRepository
+) : ViewModel(), LifecycleObserver {
+
+    private var hasMorePages = true
+    private var lastRequestPage = 0
+
+    private var categoryId: String? = null
+    private var currentQuery: String? = null
+
+    private val disposable = CompositeDisposable()
+
+    private val _dataLoading = MutableLiveData(true)
+    val dataLoading: LiveData<Boolean> = _dataLoading
+
+    private val _products = MutableLiveData<SearchData>()
+    val products: LiveData<SearchData> = _products
+
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> = _error
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop() {
+        disposable.clear()
+    }
+
+    fun onSearchByQuery(
+        query: String? = null,
+        categoryId: String? = null,
+        forceSearch: Boolean = false
+    ) {
+        if (currentQuery != query || forceSearch || categoryId != null) {
+            reset()
+            currentQuery = query
+            this.categoryId = categoryId
+            _products.value = SearchData(emptyList(), hasMorePages = true, firstPage = true)
+            repository.searchBy(lastRequestPage, query, categoryId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { _dataLoading.value = true }
+                .doFinally { _dataLoading.value = false }
+                .subscribe({ response ->
+                    setupPage(response)
+                    _products.value = SearchData(response.results, hasMorePages, true)
+                }, this::onFailure)
+                .let(disposable::add)
+        }
+    }
+
+    fun listScrolled(visibleItemCount: Int, lastVisibleItemPosition: Int, totalItemCount: Int) {
+        if (visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD >= totalItemCount && hasMorePages) {
+            paginate()
+        }
+    }
+
+    fun isCategoryIdNull(): Boolean = categoryId == null
+
+    fun reset() {
+        hasMorePages = true
+        lastRequestPage = 0
+        currentQuery = null
+        categoryId = null
+    }
+
+    private fun paginate() {
+        repository.searchBy(lastRequestPage, currentQuery, categoryId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { _dataLoading.value = true }
+            .doFinally { _dataLoading.value = false }
+            .subscribe(this::onSuccess, this::onFailure)
+            .let(disposable::add)
+    }
+
+    private fun onSuccess(response: SearchResponse) {
+        setupPage(response)
+        _products.value = SearchData(response.results, hasMorePages, false)
+    }
+
+    private fun onFailure(throwable: Throwable) {
+        _error.value = throwable.message ?: ""
+    }
+
+    private fun setupPage(response: SearchResponse) {
+        hasMorePages = if (response.results.isNotEmpty()) {
+            lastRequestPage++
+            true
+        } else {
+            false
+        }
+    }
+
+    companion object {
+        private const val VISIBLE_THRESHOLD = 0
+    }
+}

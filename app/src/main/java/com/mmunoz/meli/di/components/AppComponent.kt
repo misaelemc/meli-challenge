@@ -9,6 +9,7 @@ import com.mmunoz.meli.di.modules.ActivityBuilder
 import com.mmunoz.meli.di.modules.NetworkModule
 import com.mmunoz.meli.productdetail.impl.di.components.ProductDetailComponent
 import com.mmunoz.meli.productdetail.wiring_impl.ProductDetailWiringModule
+import com.mmunoz.meli.search.impl.di.components.SearchComponent
 import com.mmunoz.meli.search.wiring_impl.SearchWiringModule
 import dagger.BindsInstance
 import dagger.Component
@@ -29,6 +30,7 @@ import javax.inject.Singleton
     ]
 )
 interface AppComponent : AndroidInjector<MeLiApp>, CategoriesComponent.Parent,
+    SearchComponent.Parent,
     ProductDetailComponent.Parent {
 
     fun inject(app: MainActivity)
