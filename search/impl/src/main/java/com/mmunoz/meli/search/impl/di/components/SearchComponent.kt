@@ -3,7 +3,7 @@ package com.mmunoz.meli.search.impl.di.components
 import com.mmunoz.base.di.ComponentHolder
 import com.mmunoz.base.di.modules.FactoryModule
 import com.mmunoz.meli.search.impl.di.modules.SearchFeatureModule
-import com.mmunoz.meli.search.impl.ui.fragments.SearchBottomSheet
+import com.mmunoz.meli.search.impl.ui.fragments.SearchFragment
 import dagger.Component
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
@@ -37,9 +37,9 @@ interface SearchComponent {
 @Retention
 annotation class Search
 
-fun SearchBottomSheet.inject() {
-//    DaggerSearchComponent.factory()
-//        .create(ComponentHolder.component())
-//        .androidInjector()
-//        .inject(this)
+fun SearchFragment.inject() {
+    DaggerSearchComponent.factory()
+        .create(ComponentHolder.component())
+        .androidInjector()
+        .inject(this)
 }

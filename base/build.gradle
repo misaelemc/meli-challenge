@@ -8,6 +8,9 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$rootProject.ext.appCompatVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.ext.constraintLayoutVersion"
 
+    // Lottie
+    implementation "com.airbnb.android:lottie:$rootProject.ext.lottieVersion"
+
     // Dagger
     implementation "com.google.dagger:dagger:$rootProject.ext.daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"

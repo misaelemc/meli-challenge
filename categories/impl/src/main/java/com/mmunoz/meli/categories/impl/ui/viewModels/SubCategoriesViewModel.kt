@@ -22,7 +22,7 @@ class SubCategoriesViewModel constructor(
     val dataLoading: LiveData<Boolean> = _dataLoading
 
     private val _data = MutableLiveData<SubCategoryModel>()
-    val data = _data
+    val data: LiveData<SubCategoryModel> = _data
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
@@ -31,7 +31,7 @@ class SubCategoriesViewModel constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        if (disposable == null) {
+        if (disposable == null || data.value == null) {
             disposable = repository.getSubCategoriesByCategoryId(categoryModel.id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

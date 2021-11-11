@@ -4,4 +4,5 @@
     <string name="meli_categories_impl_total_items">%1$s items</string>
     <string name="meli_categories_impl_sub_categories_title">Sub Categories</string>
     <string name="meli_categories_impl_default_error">Something happened, try later!</string>
+    <string name="meli_categories_impl_back_to_categories">Back to categories</string>
 </resources>
