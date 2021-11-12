@@ -15,6 +15,8 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
+import okhttp3.OkHttpClient
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Singleton
@@ -35,11 +37,22 @@ interface AppComponent : AndroidInjector<MeLiApp>, CategoriesComponent.Parent,
 
     fun inject(app: MainActivity)
 
+    @WebServiceUrl
+    fun getWebServiceUrl(): String
+
+    fun getHttpClient(): OkHttpClient
+
     @Component.Builder
     interface Builder {
         fun build(): AppComponent
 
         @BindsInstance
+        fun url(@WebServiceUrl storeType: String): Builder
+
+        @BindsInstance
         fun application(application: MeLiApp): Builder
     }
 }
+
+@Qualifier
+annotation class WebServiceUrl

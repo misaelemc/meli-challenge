@@ -44,6 +44,7 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViewModel()
+        binding.categoryErrorView.setOnRefreshClicked { viewModel.onResume() }
     }
 
     override fun onDestroyView() {
@@ -64,12 +65,11 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
             .get(CategoriesViewModel::class.java)
         lifecycle.addObserver(viewModel)
         viewModel.error.observe(viewLifecycleOwner, {
-            binding.errorView.setData(getString(it))
-            binding.errorView.visibility = View.VISIBLE
+            binding.categoryErrorView.setData(getString(it))
         })
         viewModel.categories.observe(viewLifecycleOwner, { categories ->
-            binding.errorView.visibility = View.GONE
-            binding.recyclerView.withModels {
+            binding.categoryErrorView.hide()
+            binding.recyclerViewCategories.withModels {
                 categories.map { category ->
                     categoryView {
                         id(category.id)
@@ -79,8 +79,8 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
                 }
             }
         })
-        viewModel.dataLoading.observe(viewLifecycleOwner, { loading ->
-            binding.loaderView.visibility = if (loading) View.VISIBLE else View.GONE
+        viewModel.dataLoading.observe(viewLifecycleOwner, { show ->
+            binding.loaderView.loading(show)
         })
     }
 }

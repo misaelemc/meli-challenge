@@ -2,6 +2,7 @@ package com.mmunoz.meli.search.impl.ui.viewModels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.mmunoz.base.data.managers.DisposableManager
 import com.mmunoz.meli.productdetail.api.data.models.Product
 import com.mmunoz.meli.productdetail.api.data.models.Shipping
 import com.mmunoz.meli.search.impl.data.models.SearchData
@@ -38,6 +39,9 @@ class SearchViewModelTest {
     @Mock
     lateinit var searchRepository: SearchRepository
 
+    @Mock
+    lateinit var disposableManager: DisposableManager
+
     @Rule
     @JvmField
     var rule: TestRule = InstantTaskExecutorRule()
@@ -61,7 +65,6 @@ class SearchViewModelTest {
         sellerReputation = null
     )
     private val searchResponse: SearchResponse = SearchResponse("", listOf(product))
-    private lateinit var currentClass: Class<out SearchViewModel>
 
     @Before
     fun setUp() {
@@ -69,12 +72,17 @@ class SearchViewModelTest {
         RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
         RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
-        viewModel = SearchViewModel(searchRepository)
-        currentClass = viewModel::class.java
+        viewModel = SearchViewModel(searchRepository, disposableManager)
 
         viewModel.error.observeForever(errorObserver)
         viewModel.products.observeForever(productObserver)
         viewModel.dataLoading.observeForever(loadingObserver)
+    }
+
+    @Test
+    fun `Verify that the onPause method clear the RX disposables`() {
+        viewModel.onPause()
+        Mockito.verify(disposableManager, Mockito.times(1)).dispose()
     }
 
     @Test

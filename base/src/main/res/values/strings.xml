@@ -6,4 +6,5 @@
     <string name="error_bad_request">Seems like the signature has changed</string>
     <string name="error_server_error">Seems like the server is currently down</string>
     <string name="error_service_error">We are having trouble trying to reach the service</string>
+    <string name="refresh">Refresh</string>
 </resources>

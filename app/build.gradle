@@ -12,7 +12,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.mmunoz.meli.MockRunner"
     }
 
     buildTypes {
@@ -30,6 +30,10 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+
+    testOptions {
+        animationsDisabled = true
     }
 }
 
@@ -59,6 +63,7 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.ext.retrofitVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.ext.okhttpVersion"
 
+
     // Dagger
     implementation "com.google.dagger:dagger:$rootProject.ext.daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$rootProject.ext.daggerAndroidVersion"
@@ -80,4 +85,15 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.ext.navigationVersion"
     implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.ext.navigationVersion"
+
+    // Android runner and rules support
+    androidTestImplementation "com.android.support.test:runner:$rootProject.ext.testVersion"
+    androidTestImplementation "com.android.support.test:rules:$rootProject.ext.testVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.ext.espressoVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-contrib:$rootProject.ext.espressoVersion"
+    androidTestImplementation "com.squareup.okhttp3:okhttp:$rootProject.ext.mockWebServiceVersion"
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:$rootProject.ext.mockWebServiceVersion"
+    implementation 'androidx.test.espresso:espresso-idling-resource:3.1.1'
+    androidTestImplementation 'com.jakewharton.espresso:okhttp3-idling-resource:1.0.0'
+
 }

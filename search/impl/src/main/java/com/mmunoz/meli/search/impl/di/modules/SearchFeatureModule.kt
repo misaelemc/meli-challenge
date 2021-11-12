@@ -1,6 +1,7 @@
 package com.mmunoz.meli.search.impl.di.modules
 
 import androidx.lifecycle.ViewModel
+import com.mmunoz.base.data.managers.DisposableManager
 import com.mmunoz.base.di.scopes.FragmentScope
 import com.mmunoz.base.di.scopes.ViewModelKey
 import com.mmunoz.meli.search.impl.data.api.SearchApi
@@ -33,8 +34,9 @@ object SearchProviderModule {
     @Provides
     @ViewModelKey(SearchViewModel::class)
     fun provideViewModel(
-        repository: SearchRepository
+        repository: SearchRepository,
+        disposableManager: DisposableManager
     ): ViewModel {
-        return SearchViewModel(repository)
+        return SearchViewModel(repository, disposableManager)
     }
 }

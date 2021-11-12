@@ -3,4 +3,8 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="clear_filter">Clear Filter</string>
+
+
+    <string name="meli_url">https://api.mercadolibre.com</string>
+    <string name="meli_url_test">http://localhost:8080/</string>
 </resources>

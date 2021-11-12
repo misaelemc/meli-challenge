@@ -6,24 +6,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
+import com.mmunoz.base.data.managers.DisposableManager
 import com.mmunoz.base.data.models.getErrorMessage
 import com.mmunoz.meli.search.impl.data.models.SearchData
 import com.mmunoz.meli.search.impl.data.models.SearchResponse
 import com.mmunoz.meli.search.impl.data.repositories.SearchRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 class SearchViewModel constructor(
-    private val repository: SearchRepository
+    private val repository: SearchRepository,
+    private val disposableManager: DisposableManager
 ) : ViewModel(), LifecycleObserver {
 
     var categoryId: String? = null
     var currentQuery: String? = null
     var hasMorePages = true
     var lastRequestPage = 0
-
-    private val disposable = CompositeDisposable()
 
     private val _dataLoading = MutableLiveData(true)
     val dataLoading: LiveData<Boolean> = _dataLoading
@@ -36,7 +35,7 @@ class SearchViewModel constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause() {
-        disposable.clear()
+        disposableManager.dispose()
     }
 
     fun onSearchByQuery(
@@ -58,7 +57,7 @@ class SearchViewModel constructor(
                     setupPage(response)
                     _products.value = SearchData(response.results, hasMorePages, true)
                 }, this::onFailure)
-                .let(disposable::add)
+                .let(disposableManager::add)
         }
     }
 
@@ -73,6 +72,7 @@ class SearchViewModel constructor(
         lastRequestPage = 0
         currentQuery = null
         categoryId = null
+        _dataLoading.value = true
     }
 
     private fun paginate() {
@@ -82,7 +82,7 @@ class SearchViewModel constructor(
             .doOnSubscribe { _dataLoading.value = true }
             .doFinally { _dataLoading.value = false }
             .subscribe(this::onSuccess, this::onFailure)
-            .let(disposable::add)
+            .let(disposableManager::add)
     }
 
     private fun onSuccess(response: SearchResponse) {
