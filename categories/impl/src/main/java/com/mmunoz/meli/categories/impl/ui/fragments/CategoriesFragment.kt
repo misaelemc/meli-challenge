@@ -44,6 +44,7 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViewModel()
+        setErrorListener()
     }
 
     override fun onDestroyView() {
@@ -82,5 +83,12 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
         viewModel.dataLoading.observe(viewLifecycleOwner, { loading ->
             binding.loaderView.visibility = if (loading) View.VISIBLE else View.GONE
         })
+    }
+
+    private fun setErrorListener() {
+        binding.errorView.setOnRefreshClicked {
+            binding.errorView.visibility = View.GONE
+            viewModel.onResume()
+        }
     }
 }

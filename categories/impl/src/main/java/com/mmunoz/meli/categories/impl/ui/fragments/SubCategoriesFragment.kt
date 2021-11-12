@@ -48,6 +48,7 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        setErrorListener()
         setupViewModel()
     }
 
@@ -104,6 +105,13 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
         binding.recyclerView.layoutManager =
             GridLayoutManager(context, TWO_COLUMNS, GridLayoutManager.VERTICAL, false)
         binding.recyclerView.setHasFixedSize(false)
+    }
+
+    private fun setErrorListener() {
+        binding.errorView.setOnRefreshClicked {
+            binding.errorView.visibility = View.GONE
+            viewModel.onResume()
+        }
     }
 
     companion object {

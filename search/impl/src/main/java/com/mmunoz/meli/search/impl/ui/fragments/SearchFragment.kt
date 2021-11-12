@@ -60,6 +60,7 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
         setupViewModel()
         setFocusListener()
         searchByKeyboard()
+        setErrorListener()
         setupRecyclerView()
         addDeleteButtonListener()
         binding.editTextSearch.addTextChangedListener(this)
@@ -185,6 +186,13 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
                     )
                 }
             }
+        }
+    }
+
+    private fun setErrorListener() {
+        binding.errorView.setOnRefreshClicked {
+            binding.errorView.visibility = View.GONE
+            viewModel.onSearchByQuery(viewModel.currentQuery, viewModel.categoryId)
         }
     }
 

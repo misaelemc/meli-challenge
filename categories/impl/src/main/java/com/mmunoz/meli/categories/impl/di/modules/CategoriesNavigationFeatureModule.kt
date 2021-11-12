@@ -1,6 +1,7 @@
 package com.mmunoz.meli.categories.impl.di.modules
 
 import androidx.lifecycle.ViewModel
+import com.mmunoz.base.data.managers.DisposableManager
 import com.mmunoz.base.di.scopes.FragmentScope
 import com.mmunoz.base.di.scopes.ViewModelKey
 import com.mmunoz.meli.categories.impl.data.models.CategoryModel
@@ -57,9 +58,10 @@ object SubCategoriesProviderModule {
     @ViewModelKey(SubCategoriesViewModel::class)
     fun provideViewModel(
         fragment: SubCategoriesFragment,
-        repository: CategoriesRepository
+        repository: CategoriesRepository,
+        disposableManager: DisposableManager
     ): ViewModel {
         val args = fragment.requireArguments().getParcelable<CategoryModel>(SUB_CATEGORIES_ARGS)
-        return SubCategoriesViewModel(args!!, repository)
+        return SubCategoriesViewModel(args!!, repository, disposableManager)
     }
 }

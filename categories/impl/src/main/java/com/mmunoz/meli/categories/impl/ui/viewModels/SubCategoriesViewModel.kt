@@ -6,17 +6,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
+import com.mmunoz.base.data.managers.DisposableManager
 import com.mmunoz.base.data.models.getErrorMessage
 import com.mmunoz.meli.categories.impl.data.models.CategoryModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryModel
 import com.mmunoz.meli.categories.impl.data.repositories.CategoriesRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class SubCategoriesViewModel constructor(
     private val categoryModel: CategoryModel,
-    private val repository: CategoriesRepository
+    private val repository: CategoriesRepository,
+    private val disposableManager: DisposableManager
 ) : ViewModel(), LifecycleObserver {
 
     private val _dataLoading = MutableLiveData(true)
@@ -28,31 +29,34 @@ class SubCategoriesViewModel constructor(
     private val _error = MutableLiveData<Int>()
     val error: LiveData<Int> = _error
 
-    private var disposable: Disposable? = null
-
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        if (disposable == null || data.value == null) {
-            disposable = repository.getSubCategoriesByCategoryId(categoryModel.id)
+        if (data.value == null) {
+            repository.getSubCategoriesByCategoryId(categoryModel.id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { _dataLoading.value = true }
                 .doFinally { _dataLoading.value = false }
                 .subscribe({
-                    _data.value = it
+                    setSubCategoryData(it)
                 }, {
                     _error.value = it.getErrorMessage()
                 })
+                .let(disposableManager::add)
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause() {
-        disposable?.dispose()
+        disposableManager.dispose()
+    }
+
+    fun setSubCategoryData(data: SubCategoryModel) {
+        _data.value = data
     }
 
     override fun onCleared() {
         super.onCleared()
-        disposable = null
+        disposableManager.clear()
     }
 }
