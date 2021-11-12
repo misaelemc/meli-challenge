@@ -12,25 +12,25 @@ data class Product(
     @SerializedName("address") val address: Address?,
     @SerializedName("thumbnail") val thumbnail: String,
     @SerializedName("condition") val condition: String,
+    @SerializedName("domain_id") val domainId: String,
     @SerializedName("shipping") val shipping: Shipping,
     @SerializedName("attributes") val attributes: List<Attribute>,
     @SerializedName("sold_quantity") val soldQuantity: Int,
     @SerializedName("available_quantity") val availableQuantity: Int,
-    @SerializedName("accepts_mercadopago") val acceptMercadoPago: Boolean?,
     @SerializedName("seller_reputation") val sellerReputation: SellerReputation?,
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class Address(
     @SerializedName("state_name") val stateName: String?,
     @SerializedName("city_name") val cityName: String?
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class SellerReputation(
     @SerializedName("power_seller_status") val sellerStatus: String?,
     @SerializedName("transactions") val transactions: Transaction?,
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class Transaction(
@@ -38,20 +38,20 @@ data class Transaction(
     @SerializedName("canceled") val canceled: Int,
     @SerializedName("completed") val completed: Int,
     @SerializedName("ratings") val ratings: Rating?,
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class Rating(
     @SerializedName("neutral") val neutral: Double,
     @SerializedName("negative") val negative: Double,
     @SerializedName("positive") val positive: Double
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class Shipping(
     @SerializedName("free_shipping") val freeShipping: Boolean,
     @SerializedName("store_pick_up") val storePickUp: Boolean
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class Attribute(
@@ -61,4 +61,4 @@ data class Attribute(
     @SerializedName("value_name") val valueName: String?,
     @SerializedName("attribute_group_id") val attributeGroupId: String?,
     @SerializedName("attribute_group_name") val attributeGroupName: String?
-): Parcelable
+) : Parcelable

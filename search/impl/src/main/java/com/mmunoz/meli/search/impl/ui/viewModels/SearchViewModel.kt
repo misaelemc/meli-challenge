@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
+import com.mmunoz.base.data.models.getErrorMessage
 import com.mmunoz.meli.search.impl.data.models.SearchData
 import com.mmunoz.meli.search.impl.data.models.SearchResponse
 import com.mmunoz.meli.search.impl.data.repositories.SearchRepository
@@ -17,11 +18,10 @@ class SearchViewModel constructor(
     private val repository: SearchRepository
 ) : ViewModel(), LifecycleObserver {
 
-    private var hasMorePages = true
-    private var lastRequestPage = 0
-
-    private var categoryId: String? = null
-    private var currentQuery: String? = null
+    var categoryId: String? = null
+    var currentQuery: String? = null
+    var hasMorePages = true
+    var lastRequestPage = 0
 
     private val disposable = CompositeDisposable()
 
@@ -31,11 +31,11 @@ class SearchViewModel constructor(
     private val _products = MutableLiveData<SearchData>()
     val products: LiveData<SearchData> = _products
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> = _error
+    private val _error = MutableLiveData<Int>()
+    val error: LiveData<Int> = _error
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onStop() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPause() {
         disposable.clear()
     }
 
@@ -68,8 +68,6 @@ class SearchViewModel constructor(
         }
     }
 
-    fun isCategoryIdNull(): Boolean = categoryId == null
-
     fun reset() {
         hasMorePages = true
         lastRequestPage = 0
@@ -93,7 +91,7 @@ class SearchViewModel constructor(
     }
 
     private fun onFailure(throwable: Throwable) {
-        _error.value = throwable.message ?: ""
+        _error.value = throwable.getErrorMessage()
     }
 
     private fun setupPage(response: SearchResponse) {

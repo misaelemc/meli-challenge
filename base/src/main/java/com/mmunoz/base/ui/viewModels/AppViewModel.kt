@@ -1,4 +1,4 @@
-package com.mmunoz.base.viewModels
+package com.mmunoz.base.ui.viewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

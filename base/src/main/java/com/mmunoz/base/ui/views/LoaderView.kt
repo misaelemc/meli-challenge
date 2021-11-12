@@ -1,4 +1,4 @@
-package com.mmunoz.base.views
+package com.mmunoz.base.ui.views
 
 import android.content.Context
 import android.util.AttributeSet

@@ -64,7 +64,7 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
             .get(CategoriesViewModel::class.java)
         lifecycle.addObserver(viewModel)
         viewModel.error.observe(viewLifecycleOwner, {
-            binding.errorView.setData(getString(R.string.meli_categories_impl_default_error))
+            binding.errorView.setData(getString(it))
             binding.errorView.visibility = View.VISIBLE
         })
         viewModel.categories.observe(viewLifecycleOwner, { categories ->

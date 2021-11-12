@@ -41,4 +41,10 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$rootProject.ext.daggerAndroidVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.ext.daggerVersion"
     kapt "com.google.dagger:dagger-android-processor:$rootProject.ext.daggerVersion"
+
+    // Testing
+    testImplementation "junit:junit:$rootProject.ext.jUnitVersion"
+    testImplementation "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
+    testImplementation "org.mockito:mockito-inline:$rootProject.ext.mockitoVersion"
+    testImplementation "androidx.arch.core:core-testing:$rootProject.ext.testArchCoreVersion"
 }

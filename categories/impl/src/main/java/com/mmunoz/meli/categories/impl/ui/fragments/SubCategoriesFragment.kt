@@ -9,8 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.mmunoz.base.viewModels.AppViewModel
-import com.mmunoz.meli.categories.impl.R
+import com.mmunoz.base.ui.viewModels.AppViewModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryItemModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryModel
 import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplFragmentBinding
@@ -71,7 +70,8 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
             .get(SubCategoriesViewModel::class.java)
         lifecycle.addObserver(viewModel)
         viewModel.error.observe(viewLifecycleOwner, {
-            showErrorView()
+            binding.errorView.setData(getString(it))
+            binding.errorView.visibility = View.VISIBLE
         })
         viewModel.data.observe(viewLifecycleOwner, { data ->
             loadData(data)
@@ -79,11 +79,6 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
         viewModel.dataLoading.observe(viewLifecycleOwner, { loading ->
             binding.loaderView.visibility = if (loading) View.VISIBLE else View.GONE
         })
-    }
-
-    private fun showErrorView() {
-        binding.errorView.setData(getString(R.string.meli_categories_impl_default_error))
-        binding.errorView.visibility = View.VISIBLE
     }
 
     private fun loadData(data: SubCategoryModel) {

@@ -1,8 +1,9 @@
 package com.mmunoz.meli.productdetail.api
 
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+import com.mmunoz.meli.productdetail.api.data.models.Product
 
 interface ProductDetailFeatureLoader {
 
-    fun getFragment(): Fragment
+    fun showBottomSheet(activity: AppCompatActivity, product: Product)
 }

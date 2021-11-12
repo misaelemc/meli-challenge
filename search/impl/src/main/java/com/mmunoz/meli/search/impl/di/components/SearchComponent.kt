@@ -2,6 +2,7 @@ package com.mmunoz.meli.search.impl.di.components
 
 import com.mmunoz.base.di.ComponentHolder
 import com.mmunoz.base.di.modules.FactoryModule
+import com.mmunoz.meli.productdetail.api.ProductDetailFeatureLoader
 import com.mmunoz.meli.search.impl.di.modules.SearchFeatureModule
 import com.mmunoz.meli.search.impl.ui.fragments.SearchFragment
 import dagger.Component
@@ -23,6 +24,7 @@ interface SearchComponent {
 
     interface Parent {
         val retrofit: Retrofit
+        val productDetailFeatureLoader: ProductDetailFeatureLoader
     }
 
     fun androidInjector(): DispatchingAndroidInjector<Any>

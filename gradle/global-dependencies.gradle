@@ -42,4 +42,9 @@ ext {
 
     // Lottie
     lottieVersion = "3.4.0"
+
+    // Tests
+    jUnitVersion = "4.12"
+    mockitoVersion = "3.5.11"
+    testArchCoreVersion = "2.0.0"
 }

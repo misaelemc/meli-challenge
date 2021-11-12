@@ -10,19 +10,26 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mmunoz.base.viewModels.AppViewModel
+import com.mmunoz.base.ui.viewModels.AppViewModel
+import com.mmunoz.meli.productdetail.api.ProductDetailFeatureLoader
+import com.mmunoz.meli.productdetail.api.data.models.Product
 import com.mmunoz.meli.search.impl.databinding.MeliSearchImplFragmentBinding
 import com.mmunoz.meli.search.impl.di.components.inject
 import com.mmunoz.meli.search.impl.ui.adapters.SearchAdapter
 import com.mmunoz.meli.search.impl.ui.viewModels.SearchViewModel
+import com.mmunoz.meli.search.impl.ui.views.ProductView
 import javax.inject.Inject
 
-class SearchFragment : Fragment(), TextWatcher {
+class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
+
+    @Inject
+    lateinit var productDetailFeatureLoader: ProductDetailFeatureLoader
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -79,6 +86,10 @@ class SearchFragment : Fragment(), TextWatcher {
         }
     }
 
+    override fun onProductClicked(data: Product) {
+        productDetailFeatureLoader.showBottomSheet(requireActivity() as AppCompatActivity, data)
+    }
+
     private fun setFocusListener() {
         binding.editTextSearch.setOnFocusChangeListener { _, _ ->
             if (binding.editTextSearch.text.isNotEmpty()) {
@@ -108,7 +119,7 @@ class SearchFragment : Fragment(), TextWatcher {
             }
         })
         viewModel.error.observe(viewLifecycleOwner, {
-            binding.errorView.setData(it) // getString(R.string.meli_categories_impl_default_error)
+            binding.errorView.setData(getString(it))
             binding.errorView.animate().alpha(IN_ALPHA)
         })
         viewModel.products.observe(viewLifecycleOwner, { data ->
@@ -138,7 +149,7 @@ class SearchFragment : Fragment(), TextWatcher {
         binding.imageButtonDelete.setOnClickListener {
             binding.editTextSearch.setText(CLEAR_TEXT)
             binding.imageButtonDelete.animate().alpha(OUT_ALPHA)
-            if (viewModel.isCategoryIdNull()) {
+            if (viewModel.categoryId == null) {
                 clearSearch()
             } else {
                 viewModel.onSearchByQuery(forceSearch = true)
@@ -153,7 +164,7 @@ class SearchFragment : Fragment(), TextWatcher {
     }
 
     private fun setupRecyclerView() {
-        searchAdapter = SearchAdapter()
+        searchAdapter = SearchAdapter(this)
         binding.recyclerView.layoutManager =
             LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
         binding.recyclerView.setHasFixedSize(false)

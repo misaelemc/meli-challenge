@@ -1,7 +1,6 @@
 package com.mmunoz.meli.di.components
 
 import com.mmunoz.base.di.modules.FactoryModule
-import com.mmunoz.meli.MainActivity
 import com.mmunoz.meli.MeLiApp
 import com.mmunoz.meli.categories.impl.di.components.CategoriesComponent
 import com.mmunoz.meli.categories.wiring_impl.CategoriesWiringModule
@@ -11,6 +10,7 @@ import com.mmunoz.meli.productdetail.impl.di.components.ProductDetailComponent
 import com.mmunoz.meli.productdetail.wiring_impl.ProductDetailWiringModule
 import com.mmunoz.meli.search.impl.di.components.SearchComponent
 import com.mmunoz.meli.search.wiring_impl.SearchWiringModule
+import com.mmunoz.meli.ui.activities.MainActivity
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
+import com.mmunoz.base.data.models.getErrorMessage
 import com.mmunoz.meli.categories.impl.data.models.CategoryModel
 import com.mmunoz.meli.categories.impl.data.repositories.CategoriesRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -23,8 +24,8 @@ class CategoriesViewModel @Inject constructor(
     private val _categories = MutableLiveData<List<CategoryModel>>()
     val categories: LiveData<List<CategoryModel>> = _categories
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> = _error
+    private val _error = MutableLiveData<Int>()
+    val error: LiveData<Int> = _error
 
     private var disposable: Disposable? = null
 
@@ -39,7 +40,7 @@ class CategoriesViewModel @Inject constructor(
                 .subscribe({
                     _categories.value = it
                 }, {
-                    _error.value = it.message.orEmpty()
+                    _error.value = it.getErrorMessage()
                 })
         }
     }

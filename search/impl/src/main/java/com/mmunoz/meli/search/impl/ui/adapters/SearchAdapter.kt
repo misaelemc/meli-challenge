@@ -5,9 +5,12 @@ import com.airbnb.epoxy.EpoxyModel
 import com.mmunoz.meli.productdetail.api.data.models.Product
 import com.mmunoz.meli.search.impl.ui.views.LoaderViewModel_
 import com.mmunoz.meli.search.impl.ui.views.LoadingViewModel_
+import com.mmunoz.meli.search.impl.ui.views.ProductView
 import com.mmunoz.meli.search.impl.ui.views.productView
 
-class SearchAdapter : AsyncEpoxyController() {
+class SearchAdapter constructor(
+    private val listener: ProductView.Listener
+) : AsyncEpoxyController() {
 
     private var hasMorePages: Boolean = true
 
@@ -22,7 +25,7 @@ class SearchAdapter : AsyncEpoxyController() {
             productView {
                 id(product.id)
                 data(product)
-                //listener(this@SubCategoriesFragment)
+                listener(listener)
             }
         }
         LoadingViewModel_()
