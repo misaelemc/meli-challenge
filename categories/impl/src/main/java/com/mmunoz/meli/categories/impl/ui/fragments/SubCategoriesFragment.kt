@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.mmunoz.base.TestIdlingResource
 import com.mmunoz.base.ui.viewModels.AppViewModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryItemModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryModel
@@ -53,6 +54,11 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
         binding.subCategoryErrorView.setOnRefreshClicked { viewModel.onResume() }
     }
 
+    override fun onResume() {
+        super.onResume()
+        TestIdlingResource.increment()
+    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
@@ -73,6 +79,7 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
         lifecycle.addObserver(viewModel)
         viewModel.error.observe(viewLifecycleOwner, {
             binding.subCategoryErrorView.setData(getString(it))
+            TestIdlingResource.decrement()
         })
         viewModel.data.observe(viewLifecycleOwner, { data ->
             loadData(data)
@@ -98,6 +105,7 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
                     listener(this@SubCategoriesFragment)
                 }
             }
+            TestIdlingResource.decrement()
         }
     }
 
@@ -108,8 +116,7 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
     }
 
     private fun setErrorListener() {
-        binding.errorView.setOnRefreshClicked {
-            binding.errorView.visibility = View.GONE
+        binding.subCategoryErrorView.setOnRefreshClicked {
             viewModel.onResume()
         }
     }

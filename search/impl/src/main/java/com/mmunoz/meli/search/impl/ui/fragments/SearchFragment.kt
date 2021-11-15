@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mmunoz.base.IN_ALPHA
 import com.mmunoz.base.OUT_ALPHA
+import com.mmunoz.base.TestIdlingResource
 import com.mmunoz.base.ui.viewModels.AppViewModel
 import com.mmunoz.meli.productdetail.api.ProductDetailFeatureLoader
 import com.mmunoz.meli.productdetail.api.data.models.Product
@@ -117,12 +118,14 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
         sharedViewModel.data.observe(viewLifecycleOwner, { action ->
             if (action is AppViewModel.Actions.OnSubCategorySelected) {
                 viewModel.onSearchByQuery(categoryId = action.id)
+                TestIdlingResource.increment()
             } else if (action is AppViewModel.Actions.ClearSearch) {
                 clearSearch()
             }
         })
         viewModel.error.observe(viewLifecycleOwner, {
             binding.searchErrorView.setData(getString(it))
+            TestIdlingResource.decrement()
         })
         viewModel.products.observe(viewLifecycleOwner, { data ->
             binding.searchErrorView.hide()
@@ -131,6 +134,7 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
             } else {
                 searchAdapter.append(data.products, data.hasMorePages)
             }
+            TestIdlingResource.decrement()
         })
     }
 
@@ -139,6 +143,7 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
             TextView.OnEditorActionListener { view, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     viewModel.onSearchByQuery(binding.editTextSearch.text.toString())
+                    TestIdlingResource.increment()
                     view.hideKeyboard()
                     return@OnEditorActionListener true
                 }
@@ -155,6 +160,7 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
                 clearSearch()
             } else {
                 viewModel.onSearchByQuery(forceSearch = true)
+                TestIdlingResource.increment()
             }
             it.hideKeyboard()
         }
@@ -194,6 +200,7 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
     private fun setErrorListener() {
         binding.searchErrorView.setOnRefreshClicked {
             viewModel.onSearchByQuery(viewModel.currentQuery, viewModel.categoryId, true)
+            TestIdlingResource.increment()
         }
     }
 

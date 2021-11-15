@@ -50,4 +50,5 @@ ext {
     testArchCoreVersion = "2.0.0"
     espressoVersion = "3.0.2"
     mockWebServiceVersion = "3.10.0"
+    idlingResourceVersion = "3.4.0"
 }

@@ -1,12 +1,9 @@
 package com.mmunoz.meli.ui.activities
 
-import android.content.Intent
-import android.os.SystemClock
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.InstrumentationRegistry
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
@@ -16,57 +13,34 @@ import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.rule.ActivityTestRule
-import com.jakewharton.espresso.OkHttp3IdlingResource
+import androidx.test.filters.LargeTest
+import androidx.test.runner.AndroidJUnit4
+import com.mmunoz.base.TestIdlingResource
 import com.mmunoz.meli.R
-import com.mmunoz.meli.TestMeLiApp
 import com.mmunoz.meli.data.helpers.MockServer
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
+@LargeTest
+@RunWith(AndroidJUnit4::class)
 class MainActivityTest {
 
     private lateinit var mockServer: MockWebServer
-
-    @get:Rule
-    val rule = ActivityTestRule(MainActivity::class.java, false, false)
-
-    val resource: IdlingResource by lazy {
-        OkHttp3IdlingResource.create(
-            "okhttp",
-            TestMeLiApp.getInstance()!!.component.getHttpClient()
-        )
-    }
 
     @Before
     fun setUp() {
         mockServer = MockWebServer()
         mockServer.start(8080)
-        IdlingRegistry.getInstance().register(resource)
+        IdlingRegistry.getInstance().register(TestIdlingResource.countingIdlingResource)
     }
 
     @After
     fun tearDown() {
         mockServer.shutdown()
-        IdlingRegistry.getInstance().unregister(resource)
-    }
-
-    @Test
-    fun openingAndCloseDrawer() {
-        launchActivity()
-        onView(withId(R.id.drawer_layout))
-            .perform(DrawerActions.open())
-
-        SystemClock.sleep(500)
-
-        onView(withId(R.id.drawer_layout))
-            .perform(DrawerActions.close())
+        IdlingRegistry.getInstance().unregister(TestIdlingResource.countingIdlingResource)
     }
 
     @Test
@@ -197,10 +171,6 @@ class MainActivityTest {
         val dispatcher =
             if (!withError) MockServer.ResponseDispatcher() else MockServer.ErrorDispatcher()
         mockServer.setDispatcher(dispatcher)
-        val intent = Intent(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            MainActivity::class.java
-        )
-        rule.launchActivity(intent)
+        ActivityScenario.launch(MainActivity::class.java)
     }
 }

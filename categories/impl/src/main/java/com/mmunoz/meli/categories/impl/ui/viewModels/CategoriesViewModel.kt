@@ -1,6 +1,5 @@
 package com.mmunoz.meli.categories.impl.ui.viewModels
 
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData

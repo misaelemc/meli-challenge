@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.mmunoz.base.TestIdlingResource
 import com.mmunoz.meli.categories.impl.R
 import com.mmunoz.meli.categories.impl.data.models.CategoryModel
 import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplFragmentBinding
@@ -41,6 +42,11 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        TestIdlingResource.increment()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViewModel()
@@ -66,6 +72,7 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
         lifecycle.addObserver(viewModel)
         viewModel.error.observe(viewLifecycleOwner, {
             binding.categoryErrorView.setData(getString(it))
+            TestIdlingResource.decrement()
         })
         viewModel.categories.observe(viewLifecycleOwner, { categories ->
             binding.categoryErrorView.hide()
@@ -78,6 +85,7 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
                     }
                 }
             }
+            TestIdlingResource.decrement()
         })
         viewModel.dataLoading.observe(viewLifecycleOwner, { show ->
             binding.loaderView.loading(show)
