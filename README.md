@@ -16,10 +16,6 @@ The idea with this architecture is that we can separate the logic of features an
 - Product detail with more information about the product and seller
 - Clear searches and allow search again
 
-## Demo 
-
-<img src="./demo-video.gif"/>
-
 ## Tech
 
 For this project I use the following technologies:
