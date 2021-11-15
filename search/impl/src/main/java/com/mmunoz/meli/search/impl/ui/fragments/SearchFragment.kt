@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.idling.CountingIdlingResource
 import com.mmunoz.base.IN_ALPHA
 import com.mmunoz.base.OUT_ALPHA
-import com.mmunoz.base.decrementWithoutErrors
+import com.mmunoz.base.ui.helpers.decrementWithoutErrors
 import com.mmunoz.base.ui.viewModels.AppViewModel
 import com.mmunoz.meli.productdetail.api.ProductDetailFeatureLoader
 import com.mmunoz.meli.productdetail.api.data.models.Product

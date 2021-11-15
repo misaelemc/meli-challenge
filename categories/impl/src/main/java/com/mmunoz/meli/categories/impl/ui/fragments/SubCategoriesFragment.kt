@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.test.espresso.idling.CountingIdlingResource
-import com.mmunoz.base.decrementWithoutErrors
+import com.mmunoz.base.ui.helpers.decrementWithoutErrors
 import com.mmunoz.base.ui.viewModels.AppViewModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryItemModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryModel

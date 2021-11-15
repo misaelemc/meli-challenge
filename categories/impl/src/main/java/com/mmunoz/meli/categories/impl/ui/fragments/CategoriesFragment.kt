@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.test.espresso.idling.CountingIdlingResource
-import com.mmunoz.base.decrementWithoutErrors
+import com.mmunoz.base.ui.helpers.decrementWithoutErrors
 import com.mmunoz.meli.categories.impl.R
 import com.mmunoz.meli.categories.impl.data.models.CategoryModel
 import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplFragmentBinding

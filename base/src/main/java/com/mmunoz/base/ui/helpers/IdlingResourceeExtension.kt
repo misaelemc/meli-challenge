@@ -1,4 +1,4 @@
-package com.mmunoz.base
+package com.mmunoz.base.ui.helpers
 
 import androidx.test.espresso.idling.CountingIdlingResource
 
