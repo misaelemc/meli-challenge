@@ -12,8 +12,13 @@ The idea with this architecture is that we can separate the logic of features an
 - Browse between categories
 - Search products by categories
 - Search products by query
+- Search results pagination
 - Product detail with more information about the product and seller
 - Clear searches and allow search again
+
+## Demo 
+
+<img src="./demo-video.gif"/>
 
 ## Tech
 
