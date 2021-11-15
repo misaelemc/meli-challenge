@@ -6,10 +6,11 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 const val DEFAULT_LIMIT = 10
+const val SEARCH_API = "/sites/MLA/search?"
 
 interface SearchApi {
 
-    @GET("/sites/MLA/search?")
+    @GET(SEARCH_API)
     fun searchBy(
         @Query("offset") offset: Int,
         @Query("q") query: String? = null,

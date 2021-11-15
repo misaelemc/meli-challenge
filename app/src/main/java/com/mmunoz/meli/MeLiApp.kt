@@ -9,12 +9,14 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
-class MeLiApp : Application(), HasAndroidInjector {
+open class MeLiApp : Application(), HasAndroidInjector {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
-    private var component: AppComponent? = null
+    protected var _component: AppComponent? = null
+    val component: AppComponent
+        get() = _component!!
 
     override fun onCreate() {
         super.onCreate()
@@ -25,12 +27,18 @@ class MeLiApp : Application(), HasAndroidInjector {
         return androidInjector
     }
 
-    private fun initializeInjector() {
+    override fun onTerminate() {
+        super.onTerminate()
+        _component = null
+    }
+
+    open fun initializeInjector() {
         ComponentHolder.components.clear()
-        component = DaggerAppComponent.builder()
+        _component = DaggerAppComponent.builder()
             .application(this)
+            .url(getString(R.string.meli_url))
             .build()
             .apply { inject(this@MeLiApp) }
-        ComponentHolder.components.add(component!!)
+        ComponentHolder.components.add(component)
     }
 }

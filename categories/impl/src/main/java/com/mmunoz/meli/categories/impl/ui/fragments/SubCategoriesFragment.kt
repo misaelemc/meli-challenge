@@ -9,11 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.mmunoz.base.viewModels.AppViewModel
-import com.mmunoz.meli.categories.impl.R
+import com.mmunoz.base.TestIdlingResource
+import com.mmunoz.base.ui.viewModels.AppViewModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryItemModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryModel
-import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplFragmentBinding
+import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplSubCategoriesFragmentBinding
 import com.mmunoz.meli.categories.impl.ui.viewModels.SubCategoriesViewModel
 import com.mmunoz.meli.categories.impl.ui.views.BannerView
 import com.mmunoz.meli.categories.impl.ui.views.SubCategoryView
@@ -29,7 +29,7 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
     private lateinit var viewModel: SubCategoriesViewModel
     private lateinit var sharedViewModel: AppViewModel
 
-    private var _binding: MeliCategoriesImplFragmentBinding? = null
+    private var _binding: MeliCategoriesImplSubCategoriesFragmentBinding? = null
     private val binding get() = _binding!!
 
     override fun onAttach(context: Context) {
@@ -42,14 +42,21 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = MeliCategoriesImplFragmentBinding.inflate(inflater, container, false)
+        _binding = MeliCategoriesImplSubCategoriesFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        setErrorListener()
         setupViewModel()
+        binding.subCategoryErrorView.setOnRefreshClicked { viewModel.onResume() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        TestIdlingResource.increment()
     }
 
     override fun onDestroyView() {
@@ -71,24 +78,20 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
             .get(SubCategoriesViewModel::class.java)
         lifecycle.addObserver(viewModel)
         viewModel.error.observe(viewLifecycleOwner, {
-            showErrorView()
+            binding.subCategoryErrorView.setData(getString(it))
+            TestIdlingResource.decrement()
         })
         viewModel.data.observe(viewLifecycleOwner, { data ->
             loadData(data)
         })
-        viewModel.dataLoading.observe(viewLifecycleOwner, { loading ->
-            binding.loaderView.visibility = if (loading) View.VISIBLE else View.GONE
+        viewModel.dataLoading.observe(viewLifecycleOwner, { show ->
+            binding.loaderView.loading(show)
         })
     }
 
-    private fun showErrorView() {
-        binding.errorView.setData(getString(R.string.meli_categories_impl_default_error))
-        binding.errorView.visibility = View.VISIBLE
-    }
-
     private fun loadData(data: SubCategoryModel) {
-        binding.errorView.visibility = View.GONE
-        binding.recyclerView.withModels {
+        binding.subCategoryErrorView.hide()
+        binding.recyclerViewSubCategories.withModels {
             bannerView {
                 id(BANNER_TAG)
                 data(data.picture)
@@ -102,13 +105,20 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
                     listener(this@SubCategoriesFragment)
                 }
             }
+            TestIdlingResource.decrement()
         }
     }
 
     private fun setupRecyclerView() {
-        binding.recyclerView.layoutManager =
+        binding.recyclerViewSubCategories.layoutManager =
             GridLayoutManager(context, TWO_COLUMNS, GridLayoutManager.VERTICAL, false)
-        binding.recyclerView.setHasFixedSize(false)
+        binding.recyclerViewSubCategories.setHasFixedSize(false)
+    }
+
+    private fun setErrorListener() {
+        binding.subCategoryErrorView.setOnRefreshClicked {
+            viewModel.onResume()
+        }
     }
 
     companion object {

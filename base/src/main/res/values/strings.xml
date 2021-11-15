@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_unknown">Something happened, please try later!</string>
+    <string name="error_not_found">Page not found</string>
+    <string name="error_connection">Check your internet connection</string>
+    <string name="error_bad_request">Seems like the signature has changed</string>
+    <string name="error_server_error">Seems like the server is currently down</string>
+    <string name="error_service_error">We are having trouble trying to reach the service</string>
+    <string name="refresh">Refresh</string>
+</resources>

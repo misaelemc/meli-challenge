@@ -10,19 +10,29 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mmunoz.base.viewModels.AppViewModel
+import com.mmunoz.base.IN_ALPHA
+import com.mmunoz.base.OUT_ALPHA
+import com.mmunoz.base.TestIdlingResource
+import com.mmunoz.base.ui.viewModels.AppViewModel
+import com.mmunoz.meli.productdetail.api.ProductDetailFeatureLoader
+import com.mmunoz.meli.productdetail.api.data.models.Product
 import com.mmunoz.meli.search.impl.databinding.MeliSearchImplFragmentBinding
 import com.mmunoz.meli.search.impl.di.components.inject
 import com.mmunoz.meli.search.impl.ui.adapters.SearchAdapter
 import com.mmunoz.meli.search.impl.ui.viewModels.SearchViewModel
+import com.mmunoz.meli.search.impl.ui.views.ProductView
 import javax.inject.Inject
 
-class SearchFragment : Fragment(), TextWatcher {
+class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
+
+    @Inject
+    lateinit var productDetailFeatureLoader: ProductDetailFeatureLoader
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -53,13 +63,14 @@ class SearchFragment : Fragment(), TextWatcher {
         setupViewModel()
         setFocusListener()
         searchByKeyboard()
+        setErrorListener()
         setupRecyclerView()
         addDeleteButtonListener()
         binding.editTextSearch.addTextChangedListener(this)
     }
 
     override fun onDestroyView() {
-        binding.recyclerView.removeOnScrollListener(paginationScrollListener())
+        binding.recyclerViewSearch.removeOnScrollListener(paginationScrollListener())
         binding.editTextSearch.removeTextChangedListener(this)
         _binding = null
         super.onDestroyView()
@@ -77,6 +88,10 @@ class SearchFragment : Fragment(), TextWatcher {
             binding.imageButtonDelete.animate().alpha(OUT_ALPHA)
             binding.imageButtonAction.animate().alpha(IN_ALPHA)
         }
+    }
+
+    override fun onProductClicked(data: Product) {
+        productDetailFeatureLoader.showBottomSheet(requireActivity() as AppCompatActivity, data)
     }
 
     private fun setFocusListener() {
@@ -103,21 +118,23 @@ class SearchFragment : Fragment(), TextWatcher {
         sharedViewModel.data.observe(viewLifecycleOwner, { action ->
             if (action is AppViewModel.Actions.OnSubCategorySelected) {
                 viewModel.onSearchByQuery(categoryId = action.id)
+                TestIdlingResource.increment()
             } else if (action is AppViewModel.Actions.ClearSearch) {
                 clearSearch()
             }
         })
         viewModel.error.observe(viewLifecycleOwner, {
-            binding.errorView.setData(it) // getString(R.string.meli_categories_impl_default_error)
-            binding.errorView.animate().alpha(IN_ALPHA)
+            binding.searchErrorView.setData(getString(it))
+            TestIdlingResource.decrement()
         })
         viewModel.products.observe(viewLifecycleOwner, { data ->
-            binding.errorView.animate().alpha(OUT_ALPHA)
+            binding.searchErrorView.hide()
             if (data.firstPage) {
                 searchAdapter.dispatch(data.products)
             } else {
                 searchAdapter.append(data.products, data.hasMorePages)
             }
+            TestIdlingResource.decrement()
         })
     }
 
@@ -126,6 +143,7 @@ class SearchFragment : Fragment(), TextWatcher {
             TextView.OnEditorActionListener { view, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     viewModel.onSearchByQuery(binding.editTextSearch.text.toString())
+                    TestIdlingResource.increment()
                     view.hideKeyboard()
                     return@OnEditorActionListener true
                 }
@@ -138,10 +156,11 @@ class SearchFragment : Fragment(), TextWatcher {
         binding.imageButtonDelete.setOnClickListener {
             binding.editTextSearch.setText(CLEAR_TEXT)
             binding.imageButtonDelete.animate().alpha(OUT_ALPHA)
-            if (viewModel.isCategoryIdNull()) {
+            if (viewModel.categoryId == null) {
                 clearSearch()
             } else {
                 viewModel.onSearchByQuery(forceSearch = true)
+                TestIdlingResource.increment()
             }
             it.hideKeyboard()
         }
@@ -149,16 +168,17 @@ class SearchFragment : Fragment(), TextWatcher {
 
     private fun clearSearch() {
         viewModel.reset()
+        binding.searchErrorView.hide()
         searchAdapter.dispatch(emptyList())
     }
 
     private fun setupRecyclerView() {
-        searchAdapter = SearchAdapter()
-        binding.recyclerView.layoutManager =
+        searchAdapter = SearchAdapter(this)
+        binding.recyclerViewSearch.layoutManager =
             LinearLayoutManager(context, GridLayoutManager.VERTICAL, false)
-        binding.recyclerView.setHasFixedSize(false)
-        binding.recyclerView.addOnScrollListener(paginationScrollListener())
-        binding.recyclerView.setController(searchAdapter)
+        binding.recyclerViewSearch.setHasFixedSize(false)
+        binding.recyclerViewSearch.addOnScrollListener(paginationScrollListener())
+        binding.recyclerViewSearch.setController(searchAdapter)
         searchAdapter.dispatch(emptyList())
     }
 
@@ -177,15 +197,19 @@ class SearchFragment : Fragment(), TextWatcher {
         }
     }
 
+    private fun setErrorListener() {
+        binding.searchErrorView.setOnRefreshClicked {
+            viewModel.onSearchByQuery(viewModel.currentQuery, viewModel.categoryId, true)
+            TestIdlingResource.increment()
+        }
+    }
+
     private fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
 
     companion object {
-
-        private const val IN_ALPHA = 1F
-        private const val OUT_ALPHA = 0F
         private const val CLEAR_TEXT = ""
 
         fun newInstance(): SearchFragment {

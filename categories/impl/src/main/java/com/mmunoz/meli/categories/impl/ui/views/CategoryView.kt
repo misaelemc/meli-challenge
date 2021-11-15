@@ -18,8 +18,10 @@ class CategoryView @JvmOverloads constructor(
 
     private lateinit var data: CategoryModel
 
-    private val binding =
-        MeliCategoriesImplCategoryViewBinding.inflate(LayoutInflater.from(context), this)
+    private val binding = MeliCategoriesImplCategoryViewBinding.inflate(
+        LayoutInflater.from(context),
+        this
+    )
 
     init {
         isClickable = true

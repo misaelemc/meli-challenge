@@ -9,6 +9,7 @@ import com.airbnb.epoxy.CallbackProp
 import com.airbnb.epoxy.ModelProp
 import com.airbnb.epoxy.ModelView
 import com.bumptech.glide.Glide
+import com.mmunoz.base.ui.helpers.priceToString
 import com.mmunoz.meli.productdetail.api.data.models.Product
 import com.mmunoz.meli.search.impl.R
 import com.mmunoz.meli.search.impl.databinding.MeliSearchImplProductViewBinding
@@ -18,8 +19,10 @@ class ProductView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : ConstraintLayout(context, attrs) {
 
-    private val binding =
-        MeliSearchImplProductViewBinding.inflate(LayoutInflater.from(context), this)
+    private val binding = MeliSearchImplProductViewBinding.inflate(
+        LayoutInflater.from(context),
+        this
+    )
 
     private lateinit var data: Product
 
@@ -38,7 +41,7 @@ class ProductView @JvmOverloads constructor(
     @AfterPropsSet
     fun bindData() {
         binding.textViewName.text = data.title
-        binding.textViewPrice.text = data.price.toString()
+        binding.textViewPrice.text = data.price.priceToString()
         if (data.shipping.freeShipping) {
             binding.textViewShipping.text =
                 context.getString(R.string.meli_search_impl_free_shipping)

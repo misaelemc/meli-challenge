@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.mmunoz.base.TestIdlingResource
 import com.mmunoz.meli.categories.impl.R
 import com.mmunoz.meli.categories.impl.data.models.CategoryModel
 import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplFragmentBinding
@@ -41,9 +42,15 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        TestIdlingResource.increment()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViewModel()
+        binding.categoryErrorView.setOnRefreshClicked { viewModel.onResume() }
     }
 
     override fun onDestroyView() {
@@ -64,12 +71,12 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
             .get(CategoriesViewModel::class.java)
         lifecycle.addObserver(viewModel)
         viewModel.error.observe(viewLifecycleOwner, {
-            binding.errorView.setData(getString(R.string.meli_categories_impl_default_error))
-            binding.errorView.visibility = View.VISIBLE
+            binding.categoryErrorView.setData(getString(it))
+            TestIdlingResource.decrement()
         })
         viewModel.categories.observe(viewLifecycleOwner, { categories ->
-            binding.errorView.visibility = View.GONE
-            binding.recyclerView.withModels {
+            binding.categoryErrorView.hide()
+            binding.recyclerViewCategories.withModels {
                 categories.map { category ->
                     categoryView {
                         id(category.id)
@@ -78,9 +85,10 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
                     }
                 }
             }
+            TestIdlingResource.decrement()
         })
-        viewModel.dataLoading.observe(viewLifecycleOwner, { loading ->
-            binding.loaderView.visibility = if (loading) View.VISIBLE else View.GONE
+        viewModel.dataLoading.observe(viewLifecycleOwner, { show ->
+            binding.loaderView.loading(show)
         })
     }
 }

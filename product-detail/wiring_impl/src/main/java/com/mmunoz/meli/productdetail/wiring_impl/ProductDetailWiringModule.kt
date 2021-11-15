@@ -9,7 +9,7 @@ import dagger.Module
 abstract class ProductDetailWiringModule {
 
     @Binds
-    abstract fun bindProductDetailFragmentLoader(
+    abstract fun bindProductDetailFeatureLoader(
         impl: ProductDetailFeatureLoaderImpl
     ): ProductDetailFeatureLoader
 }

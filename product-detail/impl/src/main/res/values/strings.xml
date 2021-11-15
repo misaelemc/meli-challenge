@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="meli_product_detail_impl_conditions">%1$s | %2$s sold</string>
+    <string name="meli_product_detail_impl_sold_by"><![CDATA[Sold by  <b>%1$s</b>]]></string>
+    <string name="meli_product_detail_impl_location">Location</string>
+    <string name="meli_product_detail_impl_location_value">%1$s - %2$s</string>
+    <string name="meli_product_detail_impl_information_about_the_seller">Information about the seller</string>
+    <string name="meli_product_detail_impl_what_you_have_to_know">What you have to know about this product</string>
+</resources>
