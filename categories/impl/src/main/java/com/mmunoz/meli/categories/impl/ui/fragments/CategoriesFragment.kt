@@ -8,7 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.mmunoz.base.TestIdlingResource
+import androidx.test.espresso.idling.CountingIdlingResource
+import com.mmunoz.base.decrementWithoutErrors
 import com.mmunoz.meli.categories.impl.R
 import com.mmunoz.meli.categories.impl.data.models.CategoryModel
 import com.mmunoz.meli.categories.impl.databinding.MeliCategoriesImplFragmentBinding
@@ -20,6 +21,9 @@ import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class CategoriesFragment : Fragment(), CategoryView.Listener {
+
+    @Inject
+    lateinit var idLingResource: CountingIdlingResource
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -44,13 +48,16 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
 
     override fun onResume() {
         super.onResume()
-        TestIdlingResource.increment()
+        idLingResource.increment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViewModel()
-        binding.categoryErrorView.setOnRefreshClicked { viewModel.onResume() }
+        binding.categoryErrorView.setOnRefreshClicked {
+            idLingResource.increment()
+            viewModel.onResume()
+        }
     }
 
     override fun onDestroyView() {
@@ -72,7 +79,7 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
         lifecycle.addObserver(viewModel)
         viewModel.error.observe(viewLifecycleOwner, {
             binding.categoryErrorView.setData(getString(it))
-            TestIdlingResource.decrement()
+            idLingResource.decrementWithoutErrors()
         })
         viewModel.categories.observe(viewLifecycleOwner, { categories ->
             binding.categoryErrorView.hide()
@@ -85,7 +92,7 @@ class CategoriesFragment : Fragment(), CategoryView.Listener {
                     }
                 }
             }
-            TestIdlingResource.decrement()
+            idLingResource.decrementWithoutErrors()
         })
         viewModel.dataLoading.observe(viewLifecycleOwner, { show ->
             binding.loaderView.loading(show)

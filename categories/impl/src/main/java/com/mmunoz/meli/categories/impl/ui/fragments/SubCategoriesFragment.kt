@@ -9,7 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.mmunoz.base.TestIdlingResource
+import androidx.test.espresso.idling.CountingIdlingResource
+import com.mmunoz.base.decrementWithoutErrors
 import com.mmunoz.base.ui.viewModels.AppViewModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryItemModel
 import com.mmunoz.meli.categories.impl.data.models.SubCategoryModel
@@ -23,6 +24,9 @@ import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.Listener {
+
+    @Inject
+    lateinit var idLingResource: CountingIdlingResource
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -51,12 +55,15 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
         setupRecyclerView()
         setErrorListener()
         setupViewModel()
-        binding.subCategoryErrorView.setOnRefreshClicked { viewModel.onResume() }
+        binding.subCategoryErrorView.setOnRefreshClicked {
+            idLingResource.increment()
+            viewModel.onResume()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        TestIdlingResource.increment()
+        idLingResource.increment()
     }
 
     override fun onDestroyView() {
@@ -70,6 +77,7 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
 
     override fun onSubCategoryClicked(data: SubCategoryItemModel) {
         sharedViewModel.setAction(AppViewModel.Actions.OnSubCategorySelected(data.id, data.name))
+        idLingResource.decrementWithoutErrors()
     }
 
     private fun setupViewModel() {
@@ -79,10 +87,11 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
         lifecycle.addObserver(viewModel)
         viewModel.error.observe(viewLifecycleOwner, {
             binding.subCategoryErrorView.setData(getString(it))
-            TestIdlingResource.decrement()
+            idLingResource.decrementWithoutErrors()
         })
         viewModel.data.observe(viewLifecycleOwner, { data ->
             loadData(data)
+            idLingResource.decrementWithoutErrors()
         })
         viewModel.dataLoading.observe(viewLifecycleOwner, { show ->
             binding.loaderView.loading(show)
@@ -105,7 +114,6 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
                     listener(this@SubCategoriesFragment)
                 }
             }
-            TestIdlingResource.decrement()
         }
     }
 
@@ -117,6 +125,7 @@ class SubCategoriesFragment : Fragment(), SubCategoryView.Listener, BannerView.L
 
     private fun setErrorListener() {
         binding.subCategoryErrorView.setOnRefreshClicked {
+            idLingResource.increment()
             viewModel.onResume()
         }
     }

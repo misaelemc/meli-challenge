@@ -1,5 +1,6 @@
 package com.mmunoz.meli.di.modules
 
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.mmunoz.meli.BuildConfig
@@ -49,5 +50,11 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun getIdLingResource(): CountingIdlingResource {
+        return CountingIdlingResource("MeLi")
     }
 }

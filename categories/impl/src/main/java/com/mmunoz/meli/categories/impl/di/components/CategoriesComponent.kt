@@ -1,5 +1,6 @@
 package com.mmunoz.meli.categories.impl.di.components
 
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.mmunoz.base.di.ComponentHolder
 import com.mmunoz.base.di.modules.FactoryModule
 import com.mmunoz.meli.categories.impl.di.modules.CategoriesNavigationFeatureModule
@@ -25,6 +26,8 @@ interface CategoriesComponent {
 
     interface Parent {
         val retrofit: Retrofit
+
+        fun getIdLingResource(): CountingIdlingResource
     }
 
     fun androidInjector(): DispatchingAndroidInjector<Any>
