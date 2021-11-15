@@ -15,8 +15,8 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.filters.LargeTest
 import androidx.test.runner.AndroidJUnit4
-import com.mmunoz.base.TestIdlingResource
 import com.mmunoz.meli.R
+import com.mmunoz.meli.TestMeLiApp
 import com.mmunoz.meli.data.helpers.MockServer
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -30,17 +30,18 @@ class MainActivityTest {
 
     private lateinit var mockServer: MockWebServer
 
+
     @Before
     fun setUp() {
         mockServer = MockWebServer()
         mockServer.start(8080)
-        IdlingRegistry.getInstance().register(TestIdlingResource.countingIdlingResource)
+        IdlingRegistry.getInstance().register(TestMeLiApp.getInstance()?.component?.getIdLingResource())
     }
 
     @After
     fun tearDown() {
         mockServer.shutdown()
-        IdlingRegistry.getInstance().unregister(TestIdlingResource.countingIdlingResource)
+        IdlingRegistry.getInstance().unregister(TestMeLiApp.getInstance()?.component?.getIdLingResource())
     }
 
     @Test
@@ -65,7 +66,6 @@ class MainActivityTest {
     @Test
     fun searchingByCategoryIdAndClearSelection() {
         launchActivity()
-
         searchSubCategory()
 
         onView(withId(R.id.item_clear))
@@ -130,6 +130,7 @@ class MainActivityTest {
     fun showingErrorViewWhenTryingToSeeCategories() {
         launchActivity(true)
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.open())
+
         onView(withId(R.id.category_error_view))
             .check(matches(isDisplayed()))
     }

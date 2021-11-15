@@ -1,5 +1,6 @@
 package com.mmunoz.meli.search.impl.di.components
 
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.mmunoz.base.di.ComponentHolder
 import com.mmunoz.base.di.modules.FactoryModule
 import com.mmunoz.meli.productdetail.api.ProductDetailFeatureLoader
@@ -25,6 +26,8 @@ interface SearchComponent {
     interface Parent {
         val retrofit: Retrofit
         val productDetailFeatureLoader: ProductDetailFeatureLoader
+
+        fun getIdLingResource(): CountingIdlingResource
     }
 
     fun androidInjector(): DispatchingAndroidInjector<Any>

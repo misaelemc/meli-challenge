@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.mmunoz.base.ui.viewModels.AppViewModel
 import com.mmunoz.meli.R
 import com.mmunoz.meli.categories.api.CategoriesFeatureLoader
@@ -18,6 +19,9 @@ import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
 class MainActivity : DaggerAppCompatActivity() {
+
+    @Inject
+    lateinit var idLingResource: CountingIdlingResource
 
     @Inject
     lateinit var searchFeatureLoader: SearchFeatureLoader

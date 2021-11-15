@@ -6,19 +6,21 @@ import javax.inject.Inject
 
 class DisposableManager @Inject constructor() {
 
-    private var compositeDisposable: CompositeDisposable? = null
+    private var _compositeDisposable: CompositeDisposable? = null
+    val compositeDisposable: CompositeDisposable
+        get() = _compositeDisposable!!
 
     fun add(disposable: Disposable) {
-        if (compositeDisposable == null) {
-            compositeDisposable = CompositeDisposable()
+        if (_compositeDisposable == null) {
+            _compositeDisposable = CompositeDisposable()
         }
-        compositeDisposable!!.add(disposable)
+        compositeDisposable.add(disposable)
     }
 
-    fun dispose() = compositeDisposable?.clear()
+    fun dispose() = compositeDisposable.clear()
 
     fun clear() {
-        compositeDisposable?.clear()
-        compositeDisposable = null
+        compositeDisposable.clear()
+        _compositeDisposable = null
     }
 }

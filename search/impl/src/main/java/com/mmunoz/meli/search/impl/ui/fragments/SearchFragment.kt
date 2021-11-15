@@ -16,9 +16,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.mmunoz.base.IN_ALPHA
 import com.mmunoz.base.OUT_ALPHA
-import com.mmunoz.base.TestIdlingResource
+import com.mmunoz.base.ui.helpers.decrementWithoutErrors
 import com.mmunoz.base.ui.viewModels.AppViewModel
 import com.mmunoz.meli.productdetail.api.ProductDetailFeatureLoader
 import com.mmunoz.meli.productdetail.api.data.models.Product
@@ -33,6 +34,9 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
 
     @Inject
     lateinit var productDetailFeatureLoader: ProductDetailFeatureLoader
+
+    @Inject
+    lateinit var idLingResource: CountingIdlingResource
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -116,16 +120,16 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
 
     private fun listenToObservers() {
         sharedViewModel.data.observe(viewLifecycleOwner, { action ->
+            idLingResource.increment()
             if (action is AppViewModel.Actions.OnSubCategorySelected) {
                 viewModel.onSearchByQuery(categoryId = action.id)
-                TestIdlingResource.increment()
             } else if (action is AppViewModel.Actions.ClearSearch) {
                 clearSearch()
             }
         })
         viewModel.error.observe(viewLifecycleOwner, {
             binding.searchErrorView.setData(getString(it))
-            TestIdlingResource.decrement()
+            idLingResource.decrementWithoutErrors()
         })
         viewModel.products.observe(viewLifecycleOwner, { data ->
             binding.searchErrorView.hide()
@@ -133,8 +137,8 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
                 searchAdapter.dispatch(data.products)
             } else {
                 searchAdapter.append(data.products, data.hasMorePages)
+                idLingResource.decrementWithoutErrors()
             }
-            TestIdlingResource.decrement()
         })
     }
 
@@ -142,8 +146,8 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
         binding.editTextSearch.setOnEditorActionListener(
             TextView.OnEditorActionListener { view, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    idLingResource.increment()
                     viewModel.onSearchByQuery(binding.editTextSearch.text.toString())
-                    TestIdlingResource.increment()
                     view.hideKeyboard()
                     return@OnEditorActionListener true
                 }
@@ -156,11 +160,11 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
         binding.imageButtonDelete.setOnClickListener {
             binding.editTextSearch.setText(CLEAR_TEXT)
             binding.imageButtonDelete.animate().alpha(OUT_ALPHA)
+            idLingResource.increment()
             if (viewModel.categoryId == null) {
                 clearSearch()
             } else {
                 viewModel.onSearchByQuery(forceSearch = true)
-                TestIdlingResource.increment()
             }
             it.hideKeyboard()
         }
@@ -170,6 +174,7 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
         viewModel.reset()
         binding.searchErrorView.hide()
         searchAdapter.dispatch(emptyList())
+        idLingResource.decrementWithoutErrors()
     }
 
     private fun setupRecyclerView() {
@@ -199,8 +204,8 @@ class SearchFragment : Fragment(), TextWatcher, ProductView.Listener {
 
     private fun setErrorListener() {
         binding.searchErrorView.setOnRefreshClicked {
+            idLingResource.increment()
             viewModel.onSearchByQuery(viewModel.currentQuery, viewModel.categoryId, true)
-            TestIdlingResource.increment()
         }
     }
 

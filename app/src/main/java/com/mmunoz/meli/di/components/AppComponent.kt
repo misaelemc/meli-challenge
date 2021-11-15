@@ -1,5 +1,6 @@
 package com.mmunoz.meli.di.components
 
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.mmunoz.base.di.modules.FactoryModule
 import com.mmunoz.meli.MeLiApp
 import com.mmunoz.meli.categories.impl.di.components.CategoriesComponent
@@ -40,7 +41,7 @@ interface AppComponent : AndroidInjector<MeLiApp>, CategoriesComponent.Parent,
     @WebServiceUrl
     fun getWebServiceUrl(): String
 
-    fun getHttpClient(): OkHttpClient
+    override fun getIdLingResource(): CountingIdlingResource
 
     @Component.Builder
     interface Builder {

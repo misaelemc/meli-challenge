@@ -17,6 +17,7 @@ dependencies {
 
     // RxJava
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.ext.rxJavaVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.ext.rxAndroidVersion"
 
     // Network
     implementation "com.google.code.gson:gson:$rootProject.ext.gsonVersion"
@@ -27,4 +28,10 @@ dependencies {
 
     // Espresso
     implementation "androidx.test.espresso:espresso-idling-resource:$rootProject.ext.idlingResourceVersion"
+
+    // Testing
+    testImplementation "junit:junit:$rootProject.ext.jUnitVersion"
+    testImplementation "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
+    testImplementation "org.mockito:mockito-inline:$rootProject.ext.mockitoVersion"
+    testImplementation "androidx.arch.core:core-testing:$rootProject.ext.testArchCoreVersion"
 }
